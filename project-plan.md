@@ -1,19 +1,65 @@
-Here is a complete, beginner-friendly Filament v3 project idea and setup guide: a Personal Book Tracker (or Reading List Manager). It covers all core Filament concepts—Resource CRUD, Form components, Table filters, Status badges, and Dashboard stats widgets—without overwhelming complexity.
+# Personal Book Tracker — Filament v5 Learning Project
 
-The Concept: Personal Book Tracker
-Data Model
-Book
+A beginner-friendly Filament v5 project: a personal reading list manager. It covers the core
+Filament concepts — Resource CRUD, form components, table filters, status badges and dashboard
+stats widgets — without overwhelming complexity.
 
-title (string)
+**Stack:** Laravel 13 · Filament 5.9 · PHP 8.4 · MySQL
+**Docs:** https://filamentphp.com/docs (make sure the version switcher says 5.x)
 
-author (string)
+> Filament v5 differs from v3 tutorials: forms use `Filament\Schemas\Schema` (not `Form`),
+> all actions live in `Filament\Actions\`, and generated resources are split into
+> `Schemas/BookForm.php` and `Tables/BooksTable.php`.
 
-genre (select: Fiction, Non-Fiction, Tech, Sci-Fi)
+## Data Model
 
-status (select: Want to Read, Reading, Completed)
+**Book**
 
-rating (rating/select: 1 to 5 stars)
+| Field     | Type                 | Notes                                    |
+|-----------|----------------------|------------------------------------------|
+| title     | string               | required                                 |
+| author    | string               | required                                 |
+| genre     | string (enum)        | Fiction, Non-Fiction, Tech, Sci-Fi       |
+| status    | string (enum)        | Want to Read, Reading, Completed         |
+| rating    | tinyint, nullable    | 1 to 5 stars                             |
+| summary   | text, nullable       | textarea or rich editor                  |
+| read_at   | date, nullable       | set when the book is completed           |
 
-summary (textarea or rich editor)
+## Progress
 
-read_at (date picker)
+### Phase 0 — Setup
+- [x] Laravel project + MySQL database
+- [x] Install Filament 5.9 and the admin panel (`/admin`)
+- [x] Create admin user
+- [x] Run `php artisan boost:install` (AI agent guidelines for this stack)
+- [ ] Set `APP_NAME="Personal Book Tracker"` in `.env`
+
+### Phase 1 — Model & Data
+- [ ] `php artisan make:model Book -mfs` (model, migration, factory, seeder)
+- [ ] Migration with the fields above
+- [ ] `App\Enums\Genre` and `App\Enums\BookStatus` implementing `HasLabel` / `HasColor`
+- [ ] Cast `genre`, `status` to enums and `read_at` to `date` on the model
+- [ ] Factory + seeder (~20 fake books), run `php artisan migrate --seed`
+
+### Phase 2 — Resource CRUD
+- [ ] `php artisan make:filament-resource Book --generate`
+- [ ] Form: `TextInput` (title, author), `Select` (genre, status), rating select,
+      `RichEditor`/`Textarea` (summary), `DatePicker` (read_at)
+- [ ] Validation rules (required, rating 1–5)
+
+### Phase 3 — Table
+- [ ] Columns: title, author, genre, status, rating, read_at
+- [ ] Status as a colored badge (comes from the enum's `HasColor`)
+- [ ] Searchable title/author, sortable columns
+- [ ] Filters: `SelectFilter` for status and genre, rating filter
+
+### Phase 4 — Dashboard
+- [ ] `php artisan make:filament-widget BookStats --stats-overview`
+- [ ] Stats: total books, currently reading, completed, average rating
+- [ ] Remove `FilamentInfoWidget` from the panel
+
+### Phase 5 — Extras (optional)
+- [ ] Chart widget (books completed per month)
+- [ ] Book cover image (`FileUpload`)
+- [ ] Per-user books (`user_id`) so each user sees only their own list
+- [ ] Feature tests for the resource pages
