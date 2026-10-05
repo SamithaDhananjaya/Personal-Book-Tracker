@@ -32,14 +32,14 @@ stats widgets — without overwhelming complexity.
 - [x] Install Filament 5.9 and the admin panel (`/admin`)
 - [x] Create admin user
 - [x] Run `php artisan boost:install` (AI agent guidelines for this stack)
-- [ ] Set `APP_NAME="Personal Book Tracker"` in `.env`
+- [x] Set `APP_NAME="Personal Book Tracker"` in `.env`
 
 ### Phase 1 — Model & Data
-- [ ] `php artisan make:model Book -mfs` (model, migration, factory, seeder)
-- [ ] Migration with the fields above
-- [ ] `App\Enums\Genre` and `App\Enums\BookStatus` implementing `HasLabel` / `HasColor`
-- [ ] Cast `genre`, `status` to enums and `read_at` to `date` on the model
-- [ ] Factory + seeder (~20 fake books), run `php artisan migrate --seed`
+- [x] `php artisan make:model Book -mfs` (model, migration, factory, seeder)
+- [x] Migration with the fields above
+- [x] `App\Enums\Genre` and `App\Enums\BookStatus` implementing `HasLabel` / `HasColor`
+- [x] Cast `genre`, `status` to enums and `read_at` to `date` on the model
+- [x] Factory + seeder (~20 fake books), run `php artisan migrate --seed`
 
 ### Phase 2 — Resource CRUD
 - [ ] `php artisan make:filament-resource Book --generate`
