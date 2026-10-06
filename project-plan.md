@@ -42,15 +42,24 @@ stats widgets — without overwhelming complexity.
 - [x] Factory + seeder (~20 fake books), run `php artisan migrate --seed`
 
 ### Phase 2 — Resource CRUD
-- [ ] `php artisan make:filament-resource Book --generate`
-- [ ] Form: `TextInput` (title, author), `Select` (genre, status), rating select,
-      `RichEditor`/`Textarea` (summary), `DatePicker` (read_at)
-- [ ] Validation rules (required, rating 1–5)
+- [x] `php artisan make:filament-resource Book -G --view`
+- [x] Form: `TextInput` (title, author), `Select` (genre, status),
+      `Textarea` (summary), `DatePicker` (read_at) — generated from the model casts
+- [ ] Rating as a 1–5 `Select` (the generator made it a plain numeric `TextInput`)
+- [ ] Swap the summary `Textarea` for a `RichEditor`
+- [ ] Show rating + `read_at` only when status is Completed (`Get $get`)
+
+### Phase 2b — Actions
+- [x] `DeleteAction` on table rows (`->recordActions()`)
+- [x] `DeleteAction` + `ViewAction` in the edit page header
+- [x] Custom create notification (`getCreatedNotification()`)
+- [ ] Custom save notification on the edit page
+- [ ] `mutateFormDataBeforeCreate()` to clear rating/read_at on unfinished books
 
 ### Phase 3 — Table
-- [ ] Columns: title, author, genre, status, rating, read_at
-- [ ] Status as a colored badge (comes from the enum's `HasColor`)
-- [ ] Searchable title/author, sortable columns
+- [x] Columns: title, author, genre, status, rating, read_at
+- [x] Status as a colored badge (comes from the enum's `HasColor`)
+- [x] Searchable title/author, sortable columns
 - [ ] Filters: `SelectFilter` for status and genre, rating filter
 
 ### Phase 4 — Dashboard
