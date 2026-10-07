@@ -19,7 +19,8 @@ class BookForm
             ->components([
                 TextInput::make('title')
                     ->required(),
-                TextInput::make('author')
+                Select::make('author_id')
+                    ->relationship('author', 'name')
                     ->required(),
                 FileUpload::make('cover_path')
                     ->label('Book cover')
