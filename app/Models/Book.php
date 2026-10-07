@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['title', 'author', 'genre', 'status', 'rating', 'summary', 'read_at'])]
+#[Fillable(['title', 'author', 'cover_path', 'genre', 'status', 'rating', 'summary', 'read_at'])]
 class Book extends Model
 {
     /** @use HasFactory<BookFactory> */

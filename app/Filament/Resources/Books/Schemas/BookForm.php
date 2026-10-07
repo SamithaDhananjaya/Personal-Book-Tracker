@@ -5,9 +5,10 @@ namespace App\Filament\Resources\Books\Schemas;
 use App\Enums\BookStatus;
 use App\Enums\Genre;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class BookForm
@@ -20,6 +21,13 @@ class BookForm
                     ->required(),
                 TextInput::make('author')
                     ->required(),
+                FileUpload::make('cover_path')
+                    ->label('Book cover')
+                    ->image()
+                    ->disk('public')
+                    ->directory('book-covers')
+                    ->visibility('public')
+                    ->maxSize(2048),
                 Select::make('genre')
                     ->options(Genre::class)
                     ->required(),
