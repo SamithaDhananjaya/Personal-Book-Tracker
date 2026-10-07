@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Authors\Schemas;
 
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class AuthorForm
@@ -10,7 +12,10 @@ class AuthorForm
     {
         return $schema
             ->components([
-                //
+                TextInput::make('name')
+                    ->required(),
+                Textarea::make('bio')
+                    ->columnSpanFull(),
             ]);
     }
 }

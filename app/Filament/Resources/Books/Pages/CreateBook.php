@@ -10,12 +10,12 @@ class CreateBook extends CreateRecord
 {
     protected static string $resource = BookResource::class;
 
-    protected function getCreatedNotification(): ?Notification
-    {
-        return Notification::make()
-            ->success()
-            ->title('Book added to your list')
-            ->body("{$this->record->title} by {$this->record->author}")
-            ->duration(5000);
-    }
+    // protected function getCreatedNotification(): ?Notification
+    // {
+    //     return Notification::make()
+    //         ->success()
+    //         ->title('Book added to your list')
+    //         ->body("{$this->record->title} by {$this->record->author}")
+    //         ->duration(5000);
+    // }
 }

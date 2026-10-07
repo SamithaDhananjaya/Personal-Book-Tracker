@@ -12,7 +12,7 @@ class BookInfolist
         return $schema
             ->components([
                 TextEntry::make('title'),
-                TextEntry::make('author'),
+                TextEntry::make('author.name'),
                 TextEntry::make('genre')
                     ->badge(),
                 TextEntry::make('status')
