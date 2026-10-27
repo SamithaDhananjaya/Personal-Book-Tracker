@@ -7,6 +7,7 @@ use App\Enums\Genre;
 use App\Filament\Resources\Shelves\ShelfResource;
 use App\Models\Shelf;
 use App\Services\OpenLibrary;
+use App\Services\ReadingAssistant;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -103,9 +104,45 @@ class BookForm
                     ->maxValue(fn (Get $get): ?int => filled($get('total_pages')) ? (int) $get('total_pages') : null)
                     ->default(0),
                 Textarea::make('summary')
+                    ->rows(4)
+                    ->hintAction(
+                        Action::make('generateSummary')
+                            ->label('Write with AI')
+                            ->icon(Heroicon::OutlinedSparkles)
+                            ->visible(fn (): bool => app(ReadingAssistant::class)->isConfigured())
+                            ->action(fn (Get $get, Set $set) => static::generateSummary($get, $set)),
+                    )
                     ->columnSpanFull(),
                 DatePicker::make('read_at'),
             ]);
+    }
+
+    /**
+     * Ask Claude for a spoiler-free summary of the book in the form.
+     */
+    public static function generateSummary(Get $get, Set $set): void
+    {
+        if (blank($get('title'))) {
+            Notification::make()->warning()->title('Enter a title first.')->send();
+
+            return;
+        }
+
+        $authorName = filled($get('author_id'))
+            ? auth()->user()->authors()->whereKey($get('author_id'))->value('name')
+            : null;
+
+        $summary = app(ReadingAssistant::class)->summarize($get('title'), $authorName);
+
+        if ($summary === null) {
+            Notification::make()->warning()->title('Could not write a summary for this book.')->send();
+
+            return;
+        }
+
+        $set('summary', $summary);
+
+        Notification::make()->success()->title('Summary written. Review it before saving.')->send();
     }
 
     /**
