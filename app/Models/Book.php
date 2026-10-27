@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['user_id', 'title', 'author_id', 'cover_path', 'genre', 'status', 'rating', 'summary', 'total_pages', 'current_page', 'read_at'])]
 class Book extends Model
@@ -46,6 +47,11 @@ class Book extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class);
     }
 
     public function shelves(): BelongsToMany

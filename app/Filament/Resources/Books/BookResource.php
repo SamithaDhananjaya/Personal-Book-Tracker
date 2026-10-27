@@ -6,6 +6,7 @@ use App\Filament\Resources\Books\Pages\CreateBook;
 use App\Filament\Resources\Books\Pages\EditBook;
 use App\Filament\Resources\Books\Pages\ListBooks;
 use App\Filament\Resources\Books\Pages\ViewBook;
+use App\Filament\Resources\Books\RelationManagers\NotesRelationManager;
 use App\Filament\Resources\Books\Schemas\BookForm;
 use App\Filament\Resources\Books\Schemas\BookInfolist;
 use App\Filament\Resources\Books\Tables\BooksTable;
@@ -49,7 +50,7 @@ class BookResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            NotesRelationManager::class,
         ];
     }
 
