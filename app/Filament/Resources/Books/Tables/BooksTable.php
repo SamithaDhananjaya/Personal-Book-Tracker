@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BooksTable
 {
@@ -52,7 +53,11 @@ class BooksTable
                 SelectFilter::make('genre')
                     ->options(Genre::class),
                 SelectFilter::make('author')
-                    ->relationship('author', 'name')
+                    ->relationship(
+                        'author',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query): Builder => $query->whereBelongsTo(auth()->user()),
+                    )
                     ->searchable()
                     ->preload(),
             ])

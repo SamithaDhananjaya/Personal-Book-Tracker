@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookForm
 {
@@ -20,7 +21,18 @@ class BookForm
                 TextInput::make('title')
                     ->required(),
                 Select::make('author_id')
-                    ->relationship('author', 'name')
+                    ->relationship(
+                        'author',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query): Builder => $query->whereBelongsTo(auth()->user()),
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->required(),
+                    ])
+                    ->createOptionUsing(fn (array $data): int => auth()->user()->authors()->create($data)->getKey())
                     ->required(),
                 FileUpload::make('cover_path')
                     ->label('Book cover')

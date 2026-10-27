@@ -11,7 +11,7 @@ class BookStats extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total books', Book::count())
+            Stat::make('Total books', Book::query()->whereBelongsTo(auth()->user())->count())
                 ->description('Books in your collection')
                 ->color('success'),
         ];

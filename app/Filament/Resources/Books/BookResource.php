@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookResource extends Resource
 {
@@ -35,6 +36,14 @@ class BookResource extends Resource
     public static function table(Table $table): Table
     {
         return BooksTable::configure($table);
+    }
+
+    /**
+     * Limit records to those owned by the signed-in user.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereBelongsTo(auth()->user());
     }
 
     public static function getRelations(): array

@@ -10,11 +10,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['title', 'author_id', 'cover_path', 'genre', 'status', 'rating', 'summary', 'read_at'])]
+#[Fillable(['user_id', 'title', 'author_id', 'cover_path', 'genre', 'status', 'rating', 'summary', 'read_at'])]
 class Book extends Model
 {
     /** @use HasFactory<BookFactory> */
     use HasFactory;
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function author(): BelongsTo
     {

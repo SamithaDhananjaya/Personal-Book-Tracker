@@ -6,6 +6,7 @@ use App\Enums\BookStatus;
 use App\Enums\Genre;
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +23,10 @@ class BookFactory extends Factory
     {
         return [
             'title' => rtrim($this->faker->sentence(3), '.'),
-            'author_id' => Author::factory(),
+            'user_id' => User::factory(),
+            'author_id' => fn (array $attributes): Author => Author::factory()->create([
+                'user_id' => $attributes['user_id'],
+            ]),
             'genre' => $this->faker->randomElement(Genre::cases()),
             'status' => BookStatus::WantToRead,
             'rating' => null,
