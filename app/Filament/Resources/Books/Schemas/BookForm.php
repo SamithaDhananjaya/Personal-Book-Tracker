@@ -37,7 +37,10 @@ class BookForm
                     ->default('want_to_read')
                     ->required(),
                 TextInput::make('rating')
-                    ->numeric(),
+                    ->numeric()
+                    ->integer()
+                    ->minValue(1)
+                    ->maxValue(5),
                 Textarea::make('summary')
                     ->columnSpanFull(),
                 DatePicker::make('read_at'),

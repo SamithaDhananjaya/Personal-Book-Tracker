@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\BookStatus;
 use App\Enums\Genre;
+use App\Models\Author;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,7 +22,7 @@ class BookFactory extends Factory
     {
         return [
             'title' => rtrim($this->faker->sentence(3), '.'),
-            'author' => $this->faker->name(),
+            'author_id' => Author::factory(),
             'genre' => $this->faker->randomElement(Genre::cases()),
             'status' => BookStatus::WantToRead,
             'rating' => null,

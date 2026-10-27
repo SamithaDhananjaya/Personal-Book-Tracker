@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['title', 'author', 'author_id', 'cover_path', 'genre', 'status', 'rating', 'summary', 'read_at'])]
+#[Fillable(['title', 'author_id', 'cover_path', 'genre', 'status', 'rating', 'summary', 'read_at'])]
 class Book extends Model
 {
     /** @use HasFactory<BookFactory> */

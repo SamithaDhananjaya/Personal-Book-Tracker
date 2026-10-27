@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\Books\Tables;
 
+use App\Enums\BookStatus;
+use App\Enums\Genre;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class BooksTable
@@ -18,8 +21,10 @@ class BooksTable
             ->columns([
                 TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('author')
-                    ->searchable(),
+                TextColumn::make('author.name')
+                    ->label('Author')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('genre')
                     ->badge()
                     ->searchable(),
@@ -42,7 +47,14 @@ class BooksTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(BookStatus::class),
+                SelectFilter::make('genre')
+                    ->options(Genre::class),
+                SelectFilter::make('author')
+                    ->relationship('author', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 ViewAction::make(),
