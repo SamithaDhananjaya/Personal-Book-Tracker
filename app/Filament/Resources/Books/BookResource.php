@@ -6,6 +6,7 @@ use App\Filament\Resources\Books\Pages\CreateBook;
 use App\Filament\Resources\Books\Pages\EditBook;
 use App\Filament\Resources\Books\Pages\ListBooks;
 use App\Filament\Resources\Books\Pages\ViewBook;
+use App\Filament\Resources\Books\RelationManagers\NotesRelationManager;
 use App\Filament\Resources\Books\Schemas\BookForm;
 use App\Filament\Resources\Books\Schemas\BookInfolist;
 use App\Filament\Resources\Books\Tables\BooksTable;
@@ -15,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookResource extends Resource
 {
@@ -37,10 +39,18 @@ class BookResource extends Resource
         return BooksTable::configure($table);
     }
 
+    /**
+     * Limit records to those owned by the signed-in user.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereBelongsTo(auth()->user());
+    }
+
     public static function getRelations(): array
     {
         return [
-            //
+            NotesRelationManager::class,
         ];
     }
 

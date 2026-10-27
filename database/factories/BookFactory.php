@@ -4,7 +4,9 @@ namespace Database\Factories;
 
 use App\Enums\BookStatus;
 use App\Enums\Genre;
+use App\Models\Author;
 use App\Models\Book;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,11 +23,17 @@ class BookFactory extends Factory
     {
         return [
             'title' => rtrim($this->faker->sentence(3), '.'),
-            'author' => $this->faker->name(),
+            'isbn' => $this->faker->isbn13(),
+            'user_id' => User::factory(),
+            'author_id' => fn (array $attributes): Author => Author::factory()->create([
+                'user_id' => $attributes['user_id'],
+            ]),
             'genre' => $this->faker->randomElement(Genre::cases()),
             'status' => BookStatus::WantToRead,
             'rating' => null,
             'summary' => $this->faker->paragraph(),
+            'total_pages' => $this->faker->numberBetween(120, 800),
+            'current_page' => 0,
             'read_at' => null,
         ];
     }
@@ -35,8 +43,9 @@ class BookFactory extends Factory
      */
     public function reading(): static
     {
-        return $this->state(fn (): array => [
+        return $this->state(fn (array $attributes): array => [
             'status' => BookStatus::Reading,
+            'current_page' => $this->faker->numberBetween(1, $attributes['total_pages'] - 1),
         ]);
     }
 
