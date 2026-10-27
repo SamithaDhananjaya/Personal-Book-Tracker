@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Resources\Books\Widgets\BooksReadChart;
 use App\Filament\Resources\Books\Widgets\BookStats;
 use App\Filament\Resources\Books\Widgets\GenreBreakdownChart;
+use App\Filament\Resources\ReadingGoals\Widgets\ReadingGoalProgress;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -44,6 +45,7 @@ class AdminPanelProvider extends PanelProvider
                 // AccountWidget::class,
                 // FilamentInfoWidget::class,
                 BookStats::class,
+                ReadingGoalProgress::class,
                 BooksReadChart::class,
                 GenreBreakdownChart::class,
             ])

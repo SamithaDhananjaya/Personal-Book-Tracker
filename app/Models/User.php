@@ -38,6 +38,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Author::class);
     }
 
+    public function readingGoals(): HasMany
+    {
+        return $this->hasMany(ReadingGoal::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
