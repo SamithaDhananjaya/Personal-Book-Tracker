@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Books\Schemas;
 
+use App\Models\Book;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -19,6 +20,13 @@ class BookInfolist
                     ->badge(),
                 TextEntry::make('rating')
                     ->numeric()
+                    ->placeholder('-'),
+                TextEntry::make('progress_percentage')
+                    ->label('Progress')
+                    ->suffix('%')
+                    ->helperText(fn (Book $record): ?string => $record->total_pages
+                        ? "{$record->current_page} of {$record->total_pages} pages"
+                        : null)
                     ->placeholder('-'),
                 TextEntry::make('summary')
                     ->placeholder('-')

@@ -4,11 +4,16 @@ namespace App\Filament\Resources\Books\Tables;
 
 use App\Enums\BookStatus;
 use App\Enums\Genre;
+use App\Models\Book;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -32,6 +37,13 @@ class BooksTable
                 TextColumn::make('status')
                     ->badge()
                     ->searchable(),
+                TextColumn::make('progress_percentage')
+                    ->label('Progress')
+                    ->suffix('%')
+                    ->description(fn (Book $record): ?string => $record->total_pages
+                        ? "{$record->current_page} / {$record->total_pages} pages"
+                        : null)
+                    ->placeholder('-'),
                 TextColumn::make('rating')
                     ->numeric()
                     ->sortable(),
@@ -62,6 +74,29 @@ class BooksTable
                     ->preload(),
             ])
             ->recordActions([
+                Action::make('logProgress')
+                    ->label('Log progress')
+                    ->icon(Heroicon::OutlinedBookOpen)
+                    ->visible(fn (Book $record): bool => $record->status !== BookStatus::Completed)
+                    ->fillForm(fn (Book $record): array => ['current_page' => $record->current_page])
+                    ->schema(fn (Book $record): array => [
+                        TextInput::make('current_page')
+                            ->label('Current page')
+                            ->numeric()
+                            ->integer()
+                            ->minValue(0)
+                            ->maxValue($record->total_pages)
+                            ->helperText($record->total_pages ? "of {$record->total_pages} pages" : null)
+                            ->required(),
+                    ])
+                    ->action(function (array $data, Book $record): void {
+                        $record->logProgress((int) $data['current_page']);
+
+                        Notification::make()
+                            ->success()
+                            ->title($record->status === BookStatus::Completed ? 'Book completed!' : 'Progress saved')
+                            ->send();
+                    }),
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),

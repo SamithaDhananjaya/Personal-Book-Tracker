@@ -9,6 +9,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -53,6 +54,17 @@ class BookForm
                     ->integer()
                     ->minValue(1)
                     ->maxValue(5),
+                TextInput::make('total_pages')
+                    ->numeric()
+                    ->integer()
+                    ->minValue(1)
+                    ->live(onBlur: true),
+                TextInput::make('current_page')
+                    ->numeric()
+                    ->integer()
+                    ->minValue(0)
+                    ->maxValue(fn (Get $get): ?int => filled($get('total_pages')) ? (int) $get('total_pages') : null)
+                    ->default(0),
                 Textarea::make('summary')
                     ->columnSpanFull(),
                 DatePicker::make('read_at'),
