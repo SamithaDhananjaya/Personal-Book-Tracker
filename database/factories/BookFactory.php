@@ -23,6 +23,7 @@ class BookFactory extends Factory
     {
         return [
             'title' => rtrim($this->faker->sentence(3), '.'),
+            'isbn' => $this->faker->isbn13(),
             'user_id' => User::factory(),
             'author_id' => fn (array $attributes): Author => Author::factory()->create([
                 'user_id' => $attributes['user_id'],

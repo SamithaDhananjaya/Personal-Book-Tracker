@@ -6,14 +6,22 @@ use App\Enums\BookStatus;
 use App\Enums\Genre;
 use App\Filament\Resources\Shelves\ShelfResource;
 use App\Models\Shelf;
+use App\Services\OpenLibrary;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class BookForm
@@ -22,6 +30,19 @@ class BookForm
     {
         return $schema
             ->components([
+                TextInput::make('isbn')
+                    ->label('ISBN')
+                    ->helperText('Enter an ISBN and use the search button to fill in the details from Open Library.')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (?string $state, Set $set) => $set('isbn', filled($state) ? OpenLibrary::normalizeIsbn($state) : null))
+                    ->regex('/^(\d{9}[\dX]|\d{13})$/')
+                    ->validationMessages(['regex' => 'Enter a valid 10 or 13 digit ISBN.'])
+                    ->suffixAction(
+                        Action::make('lookupIsbn')
+                            ->label('Look up')
+                            ->icon(Heroicon::OutlinedMagnifyingGlass)
+                            ->action(fn (Get $get, Set $set) => static::fillFromOpenLibrary($get, $set)),
+                    ),
                 TextInput::make('title')
                     ->required(),
                 Select::make('author_id')
@@ -85,5 +106,60 @@ class BookForm
                     ->columnSpanFull(),
                 DatePicker::make('read_at'),
             ]);
+    }
+
+    /**
+     * Fill empty book fields from Open Library using the entered ISBN.
+     */
+    public static function fillFromOpenLibrary(Get $get, Set $set): void
+    {
+        $isbn = OpenLibrary::normalizeIsbn((string) $get('isbn'));
+
+        if (! preg_match('/^(\d{9}[\dX]|\d{13})$/', $isbn)) {
+            Notification::make()->warning()->title('Enter a valid 10 or 13 digit ISBN first.')->send();
+
+            return;
+        }
+
+        $openLibrary = app(OpenLibrary::class);
+
+        try {
+            $details = $openLibrary->findByIsbn($isbn);
+        } catch (ConnectionException|RequestException) {
+            Notification::make()->danger()->title('Open Library could not be reached. Try again later.')->send();
+
+            return;
+        }
+
+        if ($details === null) {
+            Notification::make()->warning()->title("No book found for ISBN {$isbn}.")->send();
+
+            return;
+        }
+
+        $set('isbn', $isbn);
+        $set('title', $details['title']);
+
+        if ($details['authors'] !== []) {
+            $set('author_id', auth()->user()->authors()->firstOrCreate(['name' => $details['authors'][0]])->getKey());
+        }
+
+        if ($details['total_pages'] !== null) {
+            $set('total_pages', $details['total_pages']);
+        }
+
+        if ($details['genre'] !== null && blank($get('genre'))) {
+            $set('genre', $details['genre']->value);
+        }
+
+        if ($details['cover_url'] !== null && blank($get('cover_path'))) {
+            $coverPath = $openLibrary->downloadCover($details['cover_url'], $isbn);
+
+            if ($coverPath !== null) {
+                $set('cover_path', [(string) Str::uuid() => $coverPath]);
+            }
+        }
+
+        Notification::make()->success()->title("Filled in details for “{$details['title']}”.")->send();
     }
 }
