@@ -4,12 +4,16 @@ namespace App\Filament\Resources\Books\Tables;
 
 use App\Enums\BookStatus;
 use App\Enums\Genre;
+use App\Filament\Exports\BookExporter;
+use App\Filament\Imports\BookImporter;
 use App\Models\Book;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -84,6 +88,15 @@ class BooksTable
                     )
                     ->multiple()
                     ->preload(),
+            ])
+            ->headerActions([
+                ImportAction::make()
+                    ->importer(BookImporter::class)
+                    ->label('Import CSV')
+                    ->modalDescription('Upload a CSV of books, such as a Goodreads library export.'),
+                ExportAction::make()
+                    ->exporter(BookExporter::class)
+                    ->label('Export'),
             ])
             ->recordActions([
                 Action::make('logProgress')
