@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Resources\Books\Widgets\BooksReadChart;
 use App\Filament\Resources\Books\Widgets\BookStats;
 use App\Filament\Resources\Books\Widgets\GenreBreakdownChart;
@@ -32,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile(EditProfile::class)
             ->databaseNotifications()
             ->colors([
                 'primary' => Color::Green,
