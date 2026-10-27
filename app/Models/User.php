@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'wants_reading_emails'])]
+#[Fillable(['name', 'email', 'password', 'wants_reading_emails', 'profile_slug', 'is_profile_public'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -49,6 +49,18 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Shareable URL of the reader's public profile, when they have published one.
+     */
+    public function publicProfileUrl(): ?string
+    {
+        if (! $this->is_profile_public || blank($this->profile_slug)) {
+            return null;
+        }
+
+        return route('readers.show', $this->profile_slug);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -59,6 +71,7 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'wants_reading_emails' => 'boolean',
+            'is_profile_public' => 'boolean',
         ];
     }
 }
