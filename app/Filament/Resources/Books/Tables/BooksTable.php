@@ -34,6 +34,10 @@ class BooksTable
                 TextColumn::make('genre')
                     ->badge()
                     ->searchable(),
+                TextColumn::make('shelves.name')
+                    ->label('Shelves')
+                    ->badge()
+                    ->toggleable(),
                 TextColumn::make('status')
                     ->badge()
                     ->searchable(),
@@ -71,6 +75,14 @@ class BooksTable
                         modifyQueryUsing: fn (Builder $query): Builder => $query->whereBelongsTo(auth()->user()),
                     )
                     ->searchable()
+                    ->preload(),
+                SelectFilter::make('shelves')
+                    ->relationship(
+                        'shelves',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query): Builder => $query->whereBelongsTo(auth()->user()),
+                    )
+                    ->multiple()
                     ->preload(),
             ])
             ->recordActions([

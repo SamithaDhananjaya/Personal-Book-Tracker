@@ -4,6 +4,8 @@ namespace App\Filament\Resources\Books\Schemas;
 
 use App\Enums\BookStatus;
 use App\Enums\Genre;
+use App\Filament\Resources\Shelves\ShelfResource;
+use App\Models\Shelf;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -12,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rule;
 
 class BookForm
 {
@@ -35,6 +38,19 @@ class BookForm
                     ])
                     ->createOptionUsing(fn (array $data): int => auth()->user()->authors()->create($data)->getKey())
                     ->required(),
+                Select::make('shelves')
+                    ->relationship(
+                        'shelves',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query): Builder => $query->whereBelongsTo(auth()->user()),
+                    )
+                    ->multiple()
+                    ->preload()
+                    ->nestedRecursiveRules([
+                        Rule::exists(Shelf::class, 'id')->where('user_id', auth()->id()),
+                    ])
+                    ->createOptionForm(ShelfResource::formComponents())
+                    ->createOptionUsing(fn (array $data): int => auth()->user()->shelves()->create($data)->getKey()),
                 FileUpload::make('cover_path')
                     ->label('Book cover')
                     ->image()

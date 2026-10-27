@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable(['user_id', 'title', 'author_id', 'cover_path', 'genre', 'status', 'rating', 'summary', 'total_pages', 'current_page', 'read_at'])]
 class Book extends Model
@@ -45,6 +46,11 @@ class Book extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class);
+    }
+
+    public function shelves(): BelongsToMany
+    {
+        return $this->belongsToMany(Shelf::class)->withTimestamps();
     }
 
     /**

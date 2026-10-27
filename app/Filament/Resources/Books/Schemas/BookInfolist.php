@@ -16,6 +16,10 @@ class BookInfolist
                 TextEntry::make('author.name'),
                 TextEntry::make('genre')
                     ->badge(),
+                TextEntry::make('shelves.name')
+                    ->label('Shelves')
+                    ->badge()
+                    ->placeholder('-'),
                 TextEntry::make('status')
                     ->badge(),
                 TextEntry::make('rating')
